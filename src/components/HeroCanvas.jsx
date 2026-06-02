@@ -35,9 +35,8 @@ export default function HeroCanvas() {
         style={{ filter: 'contrast(1.06) saturate(1.12) brightness(1.02)' }}
       />
 
-      {/* Soft scrim confined to the left column only — keeps the film bright
-          and true while the headline stays legible. No full-frame wash. */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-full bg-gradient-to-r from-ivory/80 via-ivory/15 to-transparent md:w-[55%] md:from-ivory/85 md:via-ivory/10" />
+      {/* No background wash — the film stays fully bright. Legibility comes from
+          darker type + a soft ivory text-halo instead of a fog overlay. */}
 
       {/* Hero copy */}
       <div className="relative z-10 flex h-full flex-col justify-center px-6 md:px-16">
@@ -46,19 +45,25 @@ export default function HeroCanvas() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="max-w-2xl"
+          style={{
+            textShadow:
+              '0 1px 3px rgba(245,239,227,0.9), 0 2px 24px rgba(245,239,227,0.65)',
+          }}
         >
           <div className="mb-6 flex items-center gap-3">
             <span className="rule-gold" />
-            <span className="label-roman">A Saree House from the Godavari</span>
+            <span className="font-roman text-[0.7rem] uppercase tracking-[0.32em] text-maroon">
+              A Saree House from the Godavari
+            </span>
           </div>
 
-          <h1 className="font-display text-6xl font-light leading-[1.04] text-maroon-deep md:text-8xl">
+          <h1 className="font-display text-6xl font-normal leading-[1.04] text-maroon-deep md:text-8xl">
             Threads
             <br />
-            <em className="italic text-zari-gold">of the Godavari.</em>
+            <em className="italic text-maroon">of the Godavari.</em>
           </h1>
 
-          <p className="mt-6 max-w-lg font-display text-lg leading-relaxed text-ink-soft md:text-xl">
+          <p className="mt-6 max-w-lg font-display text-lg font-medium leading-relaxed text-ink md:text-xl">
             Maruthi Collections is a curated saree boutique in Nidadavole, where every
             Kanjivaram, Banarasi, and Pochampally is hand-chosen by Sai Priyanka — one weave
             at a time.
@@ -82,7 +87,12 @@ export default function HeroCanvas() {
         transition={{ delay: 1.8, duration: 1 }}
         className="absolute bottom-9 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2"
       >
-        <span className="font-display text-sm italic text-ink-soft">scroll to unfold the silk</span>
+        <span
+          className="font-display text-sm italic text-maroon-deep"
+          style={{ textShadow: '0 1px 12px rgba(245,239,227,0.85)' }}
+        >
+          scroll to unfold the silk
+        </span>
         <span className="h-10 w-px animate-pulse bg-gradient-to-b from-zari-gold to-transparent" />
       </motion.div>
 

@@ -7,6 +7,7 @@
    ============================================================ */
 
 :root {
+  /* Hex tokens — for direct var() use in CSS / inline styles. */
   --ivory: #f5efe3; /* primary canvas — matches video backdrop */
   --ivory-soft: #ede4d2; /* surface elevation */
   --maroon-deep: #4a1418; /* darkest text, footer */
@@ -19,6 +20,19 @@
   --ink: #2a1f1a; /* body text */
   --ink-soft: #6b5847; /* muted text */
   --border: rgba(74, 20, 24, 0.12);
+
+  /* RGB channels — let Tailwind opacity modifiers (text-ivory/90, bg-maroon/[0.04]) work. */
+  --ivory-rgb: 245 239 227;
+  --ivory-soft-rgb: 237 228 210;
+  --maroon-deep-rgb: 74 20 24;
+  --maroon-rgb: 107 31 37;
+  --maroon-silk-rgb: 139 42 48;
+  --zari-gold-rgb: 184 137 90;
+  --zari-light-rgb: 212 172 126;
+  --peacock-blue-rgb: 42 74 107;
+  --peacock-teal-rgb: 45 107 95;
+  --ink-rgb: 42 31 26;
+  --ink-soft-rgb: 107 88 71;
 }
 
 @layer base {

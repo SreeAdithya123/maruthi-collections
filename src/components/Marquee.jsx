@@ -14,10 +14,10 @@ function Track() {
     <div className="marquee-track animate-marquee">
       {WEAVES.concat(WEAVES).map((w, i) => (
         <span key={i} className="flex items-center">
-          <span className="px-7 font-roman text-[0.7rem] uppercase tracking-[0.25em] text-ivory/90">
+          <span className="px-7 font-roman text-[0.7rem] uppercase tracking-[0.25em] text-white">
             {w}
           </span>
-          <span className="inline-block h-1.5 w-1.5 rotate-45 bg-zari-gold/90" />
+          <span className="inline-block h-1.5 w-1.5 rotate-45 bg-zari-light" />
         </span>
       ))}
     </div>

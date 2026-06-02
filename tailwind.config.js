@@ -4,17 +4,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        ivory: 'var(--ivory)',
-        'ivory-soft': 'var(--ivory-soft)',
-        'maroon-deep': 'var(--maroon-deep)',
-        maroon: 'var(--maroon)',
-        'maroon-silk': 'var(--maroon-silk)',
-        'zari-gold': 'var(--zari-gold)',
-        'zari-light': 'var(--zari-light)',
-        'peacock-blue': 'var(--peacock-blue)',
-        'peacock-teal': 'var(--peacock-teal)',
-        ink: 'var(--ink)',
-        'ink-soft': 'var(--ink-soft)',
+        // Channel format so opacity modifiers (e.g. text-ivory/90) work.
+        ivory: 'rgb(var(--ivory-rgb) / <alpha-value>)',
+        'ivory-soft': 'rgb(var(--ivory-soft-rgb) / <alpha-value>)',
+        'maroon-deep': 'rgb(var(--maroon-deep-rgb) / <alpha-value>)',
+        maroon: 'rgb(var(--maroon-rgb) / <alpha-value>)',
+        'maroon-silk': 'rgb(var(--maroon-silk-rgb) / <alpha-value>)',
+        'zari-gold': 'rgb(var(--zari-gold-rgb) / <alpha-value>)',
+        'zari-light': 'rgb(var(--zari-light-rgb) / <alpha-value>)',
+        'peacock-blue': 'rgb(var(--peacock-blue-rgb) / <alpha-value>)',
+        'peacock-teal': 'rgb(var(--peacock-teal-rgb) / <alpha-value>)',
+        ink: 'rgb(var(--ink-rgb) / <alpha-value>)',
+        'ink-soft': 'rgb(var(--ink-soft-rgb) / <alpha-value>)',
         border: 'var(--border)',
       },
       fontFamily: {
