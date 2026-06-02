@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Heart, ShoppingBag } from 'lucide-react';
+import { Heart, ShoppingBag, User } from 'lucide-react';
 import { site, navLinks } from '../data/site';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 
 function Badge({ n }) {
   if (!n) return null;
@@ -20,6 +21,7 @@ export default function Navigation() {
   const { pathname } = useLocation();
   const { itemCount } = useCart();
   const { items: wishItems } = useWishlist();
+  const { user, isAdmin } = useAuth();
 
   const forceSolid = pathname !== '/';
 
@@ -78,6 +80,14 @@ export default function Navigation() {
             <ShoppingBag size={19} />
             <Badge n={itemCount} />
           </Link>
+          <Link to={user ? '/account' : '/login'} aria-label="Account" className="text-maroon-deep transition-colors hover:text-maroon">
+            <User size={19} />
+          </Link>
+          {isAdmin && (
+            <Link to="/admin" className="hidden font-roman text-[0.62rem] uppercase tracking-[0.18em] text-maroon transition-colors hover:text-zari-gold lg:inline">
+              Admin
+            </Link>
+          )}
           <Link to="/visit" className="hidden btn-primary !px-6 !py-2.5 md:inline-flex">Enquire</Link>
           <button
             type="button"
@@ -103,6 +113,14 @@ export default function Navigation() {
             {l.label}
           </NavLink>
         ))}
+        <NavLink to={user ? '/account' : '/login'} onClick={() => setOpen(false)} className="font-display text-4xl text-maroon-deep">
+          {user ? 'Account' : 'Sign In'}
+        </NavLink>
+        {isAdmin && (
+          <NavLink to="/admin" onClick={() => setOpen(false)} className="font-display text-4xl text-maroon-deep">
+            Admin
+          </NavLink>
+        )}
         <Link to="/visit" onClick={() => setOpen(false)} className="btn-primary mt-4">Enquire</Link>
       </div>
     </header>

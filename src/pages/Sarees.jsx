@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
-import { filterSarees, categories } from '../data/sarees';
+import { filterSarees } from '../data/sarees';
+import { useProducts } from '../context/ProductsContext';
 import SareeCard from '../components/SareeCard';
 import SareeFilters from '../components/SareeFilters';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
@@ -18,6 +19,7 @@ export default function Sarees() {
   const { category = 'all' } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [drawer, setDrawer] = useState(false);
+  const { products, categories } = useProducts();
 
   const getArr = (k) => searchParams.get(k)?.split(',').filter(Boolean) || [];
   const selected = {
@@ -46,7 +48,7 @@ export default function Sarees() {
   };
   const clearAll = () => setSearchParams({}, { replace: true });
 
-  const results = filterSarees({ category, ...selected, sortBy });
+  const results = filterSarees(products, { category, ...selected, sortBy });
   const activeCat = categories.find((c) => c.slug === category) || categories[0];
 
   useRevealOnScroll([category, searchParams.toString()]);

@@ -148,7 +148,9 @@ const SEED = [
   { weave: 'uppada', title: 'The Teal Tissue', color: 'Teal', price: 19500, occasion: ['festive', 'bridal'], rating: 4.7, reviewCount: 8, desc: 'Teal Uppada tissue with a full gold-jamdani pallu.' },
 ];
 
-export const sarees = SEED.map((s, i) =>
+// The built-in catalogue used to seed the products store (and the Supabase
+// `products` table later). Pages read the *live* products from ProductsContext.
+export const SEED_SAREES = SEED.map((s, i) =>
   build({ ...s, occasion: [...s.occasion, ...(s.occasionExtra || [])] }, i)
 );
 
@@ -186,10 +188,11 @@ export function inCategory(s, cat) {
   }
 }
 
-export const categories = CATEGORY_DEFS.map((c) => ({
-  ...c,
-  count: c.slug === 'all' ? sarees.length : sarees.filter((s) => inCategory(s, c.slug)).length,
-}));
+export const computeCategories = (products) =>
+  CATEGORY_DEFS.map((c) => ({
+    ...c,
+    count: c.slug === 'all' ? products.length : products.filter((s) => inCategory(s, c.slug)).length,
+  }));
 
 // price bands for the sidebar
 export const PRICE_BANDS = [
@@ -211,7 +214,7 @@ export const occasionLabel = (o) => OCCASION_LABELS[o] || o;
 /**
  * Filter + sort. Multi-select fields accept arrays (empty = no constraint).
  */
-export function filterSarees({
+export function filterSarees(products, {
   category = 'all',
   bands = [],
   weave = [],
@@ -221,7 +224,7 @@ export function filterSarees({
   region = [],
   sortBy = 'featured',
 } = {}) {
-  let result = sarees.filter((s) => inCategory(s, category));
+  let result = products.filter((s) => inCategory(s, category));
 
   if (bands.length) {
     result = result.filter((s) =>
@@ -246,11 +249,11 @@ export function filterSarees({
   return sorted;
 }
 
-export const getSaree = (id) => sarees.find((s) => s.id === id) || null;
+export const getSaree = (products, id) => products.find((s) => s.id === id) || null;
 
-export function relatedSarees(saree, n = 4) {
+export function relatedSarees(products, saree, n = 4) {
   if (!saree) return [];
-  return sarees
+  return products
     .filter((s) => s.id !== saree.id)
     .map((s) => ({
       s,
@@ -265,3 +268,45 @@ export function relatedSarees(saree, n = 4) {
 }
 
 export const inr = (n) => `₹${Number(n).toLocaleString('en-IN')}`;
+
+/**
+ * Build a complete product object from the fields an admin enters in the
+ * dashboard (derives swatch/accent/sku/discount/specs from weave + colour).
+ */
+export function makeProduct(input) {
+  const meta = WEAVE_META[input.weave] || WEAVE_META.kanjivaram;
+  const [dark, light, accent] = COLORS[input.color] || COLORS.Maroon;
+  const price = Number(input.price) || 0;
+  const mrp = Number(input.mrp) || Math.round((price * 1.2) / 100) * 100;
+  const discount = mrp > price ? Math.round((1 - price / mrp) * 100) : 0;
+  const stamp = Date.now().toString(36);
+  return {
+    id: input.id || `mc-${stamp}`,
+    sku: input.sku || `MC-${(input.weave || 'cus').slice(0, 3).toUpperCase()}-${stamp.slice(-4).toUpperCase()}`,
+    title: input.title?.trim() || 'Untitled Saree',
+    weave: input.weave,
+    weaveLabel: meta.label,
+    region: meta.region,
+    state: meta.state,
+    fabric: meta.fabric,
+    occasion: input.occasion || [],
+    color: input.color,
+    colorHex: light,
+    price,
+    mrp,
+    discount,
+    swatch: [dark, light],
+    accent,
+    motif: input.motif || meta.motif,
+    description: input.description || '',
+    fullDescription: input.fullDescription || input.description || '',
+    specifications: { ...defaultSpecs(meta, input), ...(input.specifications || {}) },
+    stock: input.stock ?? 1,
+    isUnique: input.isUnique ?? true,
+    tags: [input.weave, ...(input.occasion || [])],
+    rating: input.rating ?? 4.7,
+    reviewCount: input.reviewCount ?? 0,
+    badge: input.badge?.trim() || null,
+    featured: input.featured ?? false,
+  };
+}

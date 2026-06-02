@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Heart, ShieldCheck, Truck, RotateCcw, Phone, Star, Check } from 'lucide-react';
-import { getSaree, relatedSarees, inr, occasionLabel } from '../data/sarees';
+import { relatedSarees, inr, occasionLabel } from '../data/sarees';
+import { useProducts } from '../context/ProductsContext';
 import { site } from '../data/site';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -44,7 +45,8 @@ const TRUST = [
 export default function SareeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const saree = getSaree(id);
+  const { products, getProduct } = useProducts();
+  const saree = getProduct(id);
   const { addToCart, isInCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const [view, setView] = useState(0);
@@ -55,7 +57,7 @@ export default function SareeDetail() {
 
   const inStock = saree.stock > 0;
   const wished = isWishlisted(saree.id);
-  const related = relatedSarees(saree);
+  const related = relatedSarees(products, saree);
   const waText = encodeURIComponent(
     `Namaskaram Sai Priyanka, I'm interested in "${saree.title}" (${saree.sku}) — ${inr(saree.price)}. Is it available?`
   );
