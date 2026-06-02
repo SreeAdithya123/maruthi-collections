@@ -33,6 +33,14 @@
   --peacock-teal-rgb: 45 107 95;
   --ink-rgb: 42 31 26;
   --ink-soft-rgb: 107 88 71;
+
+  /* E-commerce semantic aliases */
+  --success: #2d6b5f; /* peacock-teal */
+  --warning: #b8895a; /* zari-gold */
+  --error: #8b2a30; /* maroon-silk */
+  --price: #6b1f25; /* maroon */
+  --price-strike: #6b5847; /* ink-soft */
+  --discount: #2d6b5f; /* peacock-teal */
 }
 
 @layer base {
