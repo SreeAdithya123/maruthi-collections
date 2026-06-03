@@ -16,7 +16,7 @@ export const site = {
 
 export const navLinks = [
   { label: 'Home', to: '/' },
-  { label: 'Sarees', to: '/collection' },
+  { label: 'Sarees', to: '/sarees' },
   { label: 'Story', to: '/story' },
   { label: 'Visit', to: '/visit' },
 ];
