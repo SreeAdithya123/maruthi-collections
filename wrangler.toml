@@ -1,0 +1,4 @@
+# Cloudflare Pages — static SPA (direct upload of dist/).
+name = "maruthi-collections"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-09-23"
