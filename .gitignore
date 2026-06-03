@@ -4,6 +4,9 @@ dist-ssr
 *.local
 .DS_Store
 _tmp
+.env
+.agents/
+skills-lock.json
 .claude/settings.local.json
 .vscode/*
 !.vscode/extensions.json
