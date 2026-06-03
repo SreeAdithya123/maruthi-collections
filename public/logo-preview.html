@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maruthi Collections — Logo lockup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ivory: #f5efe3;
+        --maroon-deep: #4a1418;
+        --maroon: #6b1f25;
+        --gold: #b8895a;
+        --gold-light: #d4ac7e;
+        --peacock: #2a4a6b;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #ece3d2; font-family: 'Cinzel', serif; color: var(--maroon-deep); }
+      .page { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 40px 20px; }
+      .label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: #6b5847; }
+      .card {
+        width: 1080px; max-width: 96vw; height: 320px; background: var(--ivory);
+        border: 1px solid rgba(74,20,24,0.12); border-radius: 6px;
+        display: flex; align-items: center; justify-content: center; gap: 40px;
+        box-shadow: 0 20px 60px rgba(74,20,24,0.08);
+      }
+      .mark { height: 240px; width: auto; flex-shrink: 0; }
+      .mark-ph {
+        height: 220px; width: 200px; flex-shrink: 0; border: 2px dashed var(--gold);
+        border-radius: 8px; display: flex; align-items: center; justify-content: center; text-align: center;
+        font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 17px; color: var(--gold);
+        padding: 12px; background: rgba(184,137,90,0.06);
+      }
+      .word { display: flex; flex-direction: column; }
+      .brand { font-weight: 700; font-size: 88px; line-height: 0.9; letter-spacing: 0.05em; color: var(--maroon-deep); }
+      .sub { display: flex; align-items: center; gap: 16px; margin-top: 12px; }
+      .sub .rule { width: 46px; height: 0; border-top: 2px solid var(--gold); }
+      .sub .txt { font-weight: 500; font-size: 30px; letter-spacing: 0.34em; }
+      .gold .sub .rule { border-color: var(--gold); }
+      .gold .sub .txt { color: var(--gold); }
+      .blue .sub .rule { border-color: var(--peacock); }
+      .blue .sub .txt { color: var(--peacock); }
+      .tag { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--maroon); margin-top: 14px; letter-spacing: 0.02em; }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <!-- Variant A: maroon + zari gold (matches the site nav logo) -->
+      <p class="label">Option A — Maroon + Zari Gold (on-brand, matches the site)</p>
+      <div class="card gold">
+        <img class="mark" src="/hanuman.png" alt="Hanuman" onerror="this.outerHTML='&lt;div class=\'mark-ph\'&gt;Save your Hanuman art as public/hanuman.png (transparent PNG) and it appears here&lt;/div&gt;'" />
+        <div class="word">
+          <div class="brand">MARUTHI</div>
+          <div class="sub"><span class="rule"></span><span class="txt">COLLECTIONS</span><span class="rule"></span></div>
+          <div class="tag">Threads of the Godavari</div>
+        </div>
+      </div>
+
+      <!-- Variant B: maroon + peacock blue (nods to the original blue) -->
+      <p class="label">Option B — Maroon + Peacock Blue (keeps a nod to the original blue)</p>
+      <div class="card blue">
+        <img class="mark" src="/hanuman.png" alt="Hanuman" onerror="this.outerHTML='&lt;div class=\'mark-ph\'&gt;Hanuman art goes here&lt;/div&gt;'" />
+        <div class="word">
+          <div class="brand">MARUTHI</div>
+          <div class="sub"><span class="rule"></span><span class="txt">COLLECTIONS</span><span class="rule"></span></div>
+          <div class="tag">Threads of the Godavari</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
