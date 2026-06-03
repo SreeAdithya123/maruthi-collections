@@ -1,66 +1,98 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import toast from 'react-hot-toast';
+import { supabase, hasSupabase } from '../lib/supabase';
 import { SEED_SAREES, computeCategories } from '../data/sarees';
 
-// PHASE B (Supabase): replace the localStorage load/save with reads/writes to a
-// `products` table. The component API below stays the same.
+// Products live in Supabase (`products.data` jsonb). Until the table is seeded
+// — or if Supabase isn't configured — the catalogue falls back to the built-in
+// sarees so the storefront is never empty. Admins seed/edit via the dashboard.
 const ProductsContext = createContext(null);
-const KEY = 'maruthi-products';
-
-function load() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(KEY));
-    if (Array.isArray(stored) && stored.length) return stored;
-  } catch {
-    /* ignore */
-  }
-  return SEED_SAREES;
-}
 
 export function ProductsProvider({ children }) {
-  const [products, setProducts] = useState(load);
+  const [remote, setRemote] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProducts = useCallback(async () => {
+    if (!hasSupabase) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, data')
+      .order('created_at', { ascending: true });
+    if (!error && data) setRemote(data.map((r) => r.data));
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(products));
-    } catch {
-      /* ignore */
-    }
-  }, [products]);
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const seeded = remote.length > 0;
+  const products = seeded ? remote : SEED_SAREES;
 
   const getProduct = useCallback((id) => products.find((p) => p.id === id) || null, [products]);
 
-  const addProduct = useCallback((product) => {
-    setProducts((prev) => [product, ...prev.filter((p) => p.id !== product.id)]);
-    toast.success(`${product.title} — added`);
-  }, []);
+  const addProduct = useCallback(
+    async (product) => {
+      if (!hasSupabase) return toast.error('Catalogue is not connected');
+      const { error } = await supabase.from('products').insert({ id: product.id, data: product });
+      if (error) return toast.error(error.message);
+      toast.success(`${product.title} — added`);
+      return fetchProducts();
+    },
+    [fetchProducts]
+  );
 
-  const updateProduct = useCallback((id, patch) => {
-    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
-    toast.success('Changes saved');
-  }, []);
+  const updateProduct = useCallback(
+    async (id, product) => {
+      if (!hasSupabase) return toast.error('Catalogue is not connected');
+      const { error } = await supabase
+        .from('products')
+        .upsert({ id, data: product, updated_at: new Date().toISOString() });
+      if (error) return toast.error(error.message);
+      toast.success('Changes saved');
+      return fetchProducts();
+    },
+    [fetchProducts]
+  );
 
-  const deleteProduct = useCallback((id) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-    toast('Removed from the collection');
-  }, []);
+  const deleteProduct = useCallback(
+    async (id) => {
+      if (!hasSupabase) return toast.error('Catalogue is not connected');
+      const { error } = await supabase.from('products').delete().eq('id', id);
+      if (error) return toast.error(error.message);
+      toast('Removed from the collection');
+      return fetchProducts();
+    },
+    [fetchProducts]
+  );
 
-  const resetCatalogue = useCallback(() => {
-    setProducts(SEED_SAREES);
-    toast('Catalogue reset to defaults');
-  }, []);
+  const seedCatalogue = useCallback(async () => {
+    if (!hasSupabase) return toast.error('Catalogue is not connected');
+    const rows = SEED_SAREES.map((p) => ({ id: p.id, data: p }));
+    const { error } = await supabase.from('products').upsert(rows);
+    if (error) return toast.error(error.message);
+    toast.success('Catalogue seeded with 35 sarees');
+    return fetchProducts();
+  }, [fetchProducts]);
 
   const value = useMemo(
     () => ({
       products,
       categories: computeCategories(products),
+      seeded,
+      loading,
       getProduct,
       addProduct,
       updateProduct,
       deleteProduct,
-      resetCatalogue,
+      seedCatalogue,
+      refresh: fetchProducts,
     }),
-    [products, getProduct, addProduct, updateProduct, deleteProduct, resetCatalogue]
+    [products, seeded, loading, getProduct, addProduct, updateProduct, deleteProduct, seedCatalogue, fetchProducts]
   );
 
   return <ProductsContext.Provider value={value}>{children}</ProductsContext.Provider>;

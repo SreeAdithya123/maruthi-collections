@@ -16,9 +16,13 @@ export default function Signup() {
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await signUp(form);
+    const res = await signUp(form);
     setBusy(false);
-    if (!error) navigate('/account', { replace: true });
+    if (res.needsConfirmation) {
+      navigate('/login', { replace: true });
+      return;
+    }
+    if (!res.error) navigate('/account', { replace: true });
   };
 
   return (
