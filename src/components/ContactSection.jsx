@@ -1,10 +1,6 @@
-import { lazy, Suspense } from 'react';
 import ContactForm from './ContactForm';
 import { site } from '../data/site';
-
-// Three.js is heavy — split it into its own chunk, loaded only when the
-// contact section is reached.
-const ContactAvatar = lazy(() => import('./ContactAvatar'));
+import HanumanFigure from './HanumanFigure';
 
 function Block({ head, children }) {
   return (
@@ -20,19 +16,9 @@ function Block({ head, children }) {
 export default function ContactSection() {
   return (
     <section id="visit" className="grid bg-ivory md:grid-cols-2">
-      {/* Left — avatar */}
+      {/* Left — Hanuman mark */}
       <div className="relative border-b md:border-b-0 md:border-r" style={{ borderColor: 'var(--border)' }}>
-        <Suspense
-          fallback={
-            <div className="flex min-h-[480px] items-center justify-center md:min-h-screen">
-              <span className="animate-pulse font-display text-lg italic text-ink-soft">
-                🙏 Namaskaram
-              </span>
-            </div>
-          }
-        >
-          <ContactAvatar />
-        </Suspense>
+        <HanumanFigure />
       </div>
 
       {/* Right — visit panel */}
