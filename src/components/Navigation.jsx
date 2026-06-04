@@ -5,6 +5,7 @@ import { site, navLinks } from '../data/site';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
+import Logo from './Logo';
 
 function Badge({ n }) {
   if (!n) return null;
@@ -44,12 +45,7 @@ export default function Navigation() {
         }`}
       >
         {/* Logo */}
-        <Link to="/" className="flex flex-col leading-none">
-          <span className="font-roman text-[0.95rem] uppercase tracking-[0.28em] text-maroon-deep md:text-[1.05rem]">
-            Maruthi <span className="hidden sm:inline">Collections</span>
-          </span>
-          <span className="mt-1 font-display text-[0.72rem] italic text-ink-soft">{site.est}</span>
-        </Link>
+        <Logo markHeight={38} />
 
         {/* Center links */}
         <ul className="hidden items-center gap-9 md:flex">

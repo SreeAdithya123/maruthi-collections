@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { site } from '../data/site';
+import Logo from './Logo';
 
 const columns = [
   {
@@ -25,9 +26,7 @@ export default function Footer() {
       <div className="relative z-10 mx-auto grid max-w-[1400px] gap-12 px-6 pb-16 pt-20 md:grid-cols-[2fr_1fr_1fr_1.2fr] md:px-12">
         {/* Brand blurb */}
         <div>
-          <h3 className="font-roman text-lg uppercase tracking-[0.24em] text-ivory">
-            Maruthi Collections
-          </h3>
+          <Logo tone="light" markHeight={48} />
           <p className="mt-3 font-display text-2xl italic text-zari-light">{site.tagline}.</p>
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-ivory/65">
             A boutique saree house in Nidadavole, curated by {site.owner} since 2018.
