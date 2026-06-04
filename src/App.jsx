@@ -14,6 +14,7 @@ import Cursor from './components/Cursor.jsx';
 import Navigation from './components/Navigation.jsx';
 import Footer from './components/Footer.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
+import SplashScreen from './components/SplashScreen.jsx';
 import { RequireAuth, RequireAdmin } from './components/RouteGuards.jsx';
 
 import Home from './pages/Home.jsx';
@@ -73,6 +74,7 @@ export default function App() {
               ref={lenisRef}
               options={{ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1, autoRaf: false, syncTouch: false }}
             >
+              <SplashScreen />
               <ScrollSync />
               <RouteResetter />
               <Cursor />
