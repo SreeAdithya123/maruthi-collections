@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { MailCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const FIELD =
   'w-full border bg-ivory px-4 py-3 font-sans text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-zari-gold';
 
 export default function Signup() {
-  const { signUp } = useAuth();
+  const { signUp, resendVerification } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState(null); // email awaiting verification
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -19,11 +21,33 @@ export default function Signup() {
     const res = await signUp(form);
     setBusy(false);
     if (res.needsConfirmation) {
-      navigate('/login', { replace: true });
+      setPending(res.email || form.email);
       return;
     }
     if (!res.error) navigate('/account', { replace: true });
   };
+
+  if (pending) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-ivory px-6 py-32">
+        <div className="w-full max-w-md text-center">
+          <MailCheck size={30} className="mx-auto text-zari-gold" />
+          <h1 className="mt-4 font-display text-4xl font-light text-maroon-deep">Verify your email</h1>
+          <p className="mt-3 text-ink-soft">
+            We&rsquo;ve sent a confirmation link to <span className="text-maroon-deep">{pending}</span>. Click it and
+            you&rsquo;ll come straight back here, signed in and ready to shop.
+          </p>
+          <button onClick={() => resendVerification(pending)} className="btn-ghost mt-8">
+            Resend email
+          </button>
+          <p className="mt-4 text-sm text-ink-soft">
+            Wrong address?{' '}
+            <button onClick={() => setPending(null)} className="text-maroon hover:text-zari-gold">Start over</button>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-ivory px-6 py-32">

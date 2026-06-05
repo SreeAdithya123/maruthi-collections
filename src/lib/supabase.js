@@ -6,5 +6,24 @@ const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // If env vars are missing (e.g. a clone without .env, or Netlify without the
 // vars set), the app still runs: auth is disabled and the catalogue falls back
 // to the built-in sarees. With them set, everything is backed by Supabase.
-export const supabase = url && key ? createClient(url, key) : null;
+//
+// detectSessionInUrl is OFF so the /auth/callback page can parse the email
+// confirmation / recovery link itself (it needs to read `type` before the URL
+// is consumed, and decide where to send the user).
+export const supabase =
+  url && key
+    ? createClient(url, key, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: false,
+          flowType: 'pkce',
+        },
+      })
+    : null;
+
 export const hasSupabase = Boolean(supabase);
+
+// Where confirmation / recovery emails should send the user back to.
+export const authRedirectTo = () =>
+  typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined;

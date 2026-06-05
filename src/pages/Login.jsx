@@ -37,7 +37,12 @@ export default function Login() {
             <input type="email" required value={form.email} onChange={set('email')} className={FIELD} style={{ borderColor: 'var(--border)' }} placeholder="you@email.com" />
           </div>
           <div>
-            <label className="mb-2 block font-roman text-[0.58rem] uppercase tracking-[0.2em] text-ink-soft">Password</label>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="block font-roman text-[0.58rem] uppercase tracking-[0.2em] text-ink-soft">Password</label>
+              <Link to="/forgot-password" className="font-sans text-xs text-maroon hover:text-zari-gold">
+                Forgot password?
+              </Link>
+            </div>
             <input type="password" required value={form.password} onChange={set('password')} className={FIELD} style={{ borderColor: 'var(--border)' }} placeholder="••••••••" />
           </div>
           <button type="submit" disabled={busy} className="btn-primary w-full justify-center disabled:opacity-60">

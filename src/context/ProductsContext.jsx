@@ -41,6 +41,8 @@ export function ProductsProvider({ children }) {
       const { error } = await supabase.from('products').insert({ id: product.id, data: product });
       if (error) return toast.error(error.message);
       toast.success(`${product.title} — added`);
+      // Announce the new arrival to opted-in customers (best-effort, admin-only on the server).
+      supabase.functions.invoke('email', { body: { kind: 'new-arrival', productId: product.id } }).catch(() => {});
       return fetchProducts();
     },
     [fetchProducts]

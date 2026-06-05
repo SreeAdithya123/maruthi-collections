@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { supabase, hasSupabase } from '../lib/supabase';
+import { supabase, hasSupabase, authRedirectTo } from '../lib/supabase';
 
 // Supabase Auth. `isAdmin` comes from profiles.is_admin, which you set MANUALLY
 // in the Supabase dashboard (or via SQL) for admin accounts. Users self-signup
@@ -63,15 +63,15 @@ export function AuthProvider({ children }) {
       const { data, error } = await supabase.auth.signUp({
         email: email.trim().toLowerCase(),
         password,
-        options: { data: { full_name: name.trim() } },
+        options: { data: { full_name: name.trim() }, emailRedirectTo: authRedirectTo() },
       });
       if (error) {
         toast.error(error.message);
         return { error: error.message };
       }
       if (!data.session) {
-        toast('Check your email to confirm your account, then sign in.');
-        return { needsConfirmation: true };
+        // Email confirmation is required — the verification mail is on its way.
+        return { needsConfirmation: true, email: email.trim().toLowerCase() };
       }
       await loadProfile(data.user);
       toast.success(`Welcome, ${name.trim().split(' ')[0]}`);
@@ -79,6 +79,44 @@ export function AuthProvider({ children }) {
     },
     [loadProfile]
   );
+
+  const resendVerification = useCallback(async (email) => {
+    if (!hasSupabase) return { error: 'no-supabase' };
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email.trim().toLowerCase(),
+      options: { emailRedirectTo: authRedirectTo() },
+    });
+    if (error) {
+      toast.error(error.message);
+      return { error: error.message };
+    }
+    toast.success('Verification email sent again');
+    return {};
+  }, []);
+
+  const requestPasswordReset = useCallback(async (email) => {
+    if (!hasSupabase) return { error: 'no-supabase' };
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+      redirectTo: authRedirectTo(),
+    });
+    if (error) {
+      toast.error(error.message);
+      return { error: error.message };
+    }
+    return {};
+  }, []);
+
+  const updatePassword = useCallback(async (password) => {
+    if (!hasSupabase) return { error: 'no-supabase' };
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) {
+      toast.error(error.message);
+      return { error: error.message };
+    }
+    toast.success('Password updated');
+    return {};
+  }, []);
 
   const signIn = useCallback(
     async ({ email, password }) => {
@@ -109,8 +147,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, isAdmin, ready, signUp, signIn, signOut }),
-    [user, isAdmin, ready, signUp, signIn, signOut]
+    () => ({
+      user,
+      isAdmin,
+      ready,
+      signUp,
+      signIn,
+      signOut,
+      resendVerification,
+      requestPasswordReset,
+      updatePassword,
+    }),
+    [user, isAdmin, ready, signUp, signIn, signOut, resendVerification, requestPasswordReset, updatePassword]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

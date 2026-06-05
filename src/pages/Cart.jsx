@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { Minus, Plus, X, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 import { inr } from '../data/sarees';
 import { site } from '../data/site';
 import ProductImage from '../components/ProductImage';
@@ -11,11 +14,14 @@ import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 const COUPONS = { FESTIVE10: 0.1, GODAVARI5: 0.05 };
 
 export default function Cart() {
-  const { items, updateQty, removeFromCart, subtotal, savings, itemCount } = useCart();
+  const { items, updateQty, removeFromCart, clearCart, subtotal, savings, itemCount } = useCart();
   const { addToWishlist } = useWishlist();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [coupon, setCoupon] = useState('');
   const [applied, setApplied] = useState(null);
   const [couponMsg, setCouponMsg] = useState('');
+  const [placing, setPlacing] = useState(false);
   useRevealOnScroll([items.length]);
 
   const applyCoupon = () => {
@@ -37,6 +43,38 @@ export default function Cart() {
   const saveForLater = (item) => {
     addToWishlist(item);
     removeFromCart(item.lineId);
+  };
+
+  const placeOrder = async () => {
+    if (!user) {
+      toast('Please sign in to place your order');
+      navigate('/login', { state: { from: '/cart' } });
+      return;
+    }
+    if (!supabase) return toast.error('Orders are not configured yet');
+    setPlacing(true);
+    const payload = {
+      user_id: user.id,
+      email: user.email,
+      customer_name: user.name,
+      items: items.map((i) => ({ id: i.id, title: i.title, sku: i.sku, size: i.size || null, qty: i.qty, price: i.price })),
+      subtotal,
+      discount: couponDiscount,
+      gst,
+      total,
+      status: 'pending',
+    };
+    const { data, error } = await supabase.from('orders').insert(payload).select().single();
+    if (error) {
+      setPlacing(false);
+      return toast.error(error.message);
+    }
+    // Email the invoice (best-effort; needs the email function + RESEND key).
+    supabase.functions.invoke('email', { body: { kind: 'invoice', orderId: data.id } }).catch(() => {});
+    clearCart();
+    setPlacing(false);
+    toast.success(`Order ${data.order_no} placed — your invoice is on its way`);
+    navigate('/account');
   };
 
   const orderViaWhatsApp = () => {
@@ -148,9 +186,14 @@ export default function Cart() {
                 <span className="font-display text-2xl text-maroon">{inr(total)}</span>
               </div>
 
-              <button onClick={orderViaWhatsApp} className="btn-primary mt-5 w-full justify-center">Place Order — WhatsApp</button>
+              <button onClick={placeOrder} disabled={placing} className="btn-primary mt-5 w-full justify-center disabled:opacity-60">
+                {placing ? 'Placing…' : 'Place Order'}
+              </button>
+              <button onClick={orderViaWhatsApp} className="btn-ghost mt-2 w-full justify-center">
+                Order on WhatsApp instead
+              </button>
               <p className="mt-3 flex items-center justify-center gap-1.5 text-center font-sans text-[0.7rem] text-ink-soft">
-                <ShieldCheck size={12} className="text-zari-gold" /> Sai Priyanka confirms every order personally
+                <ShieldCheck size={12} className="text-zari-gold" /> You&rsquo;ll get an invoice by email; Sai Priyanka confirms payment personally
               </p>
               <p className="mt-4 border-t pt-4 text-center font-sans text-xs text-ink-soft" style={{ borderColor: 'var(--border)' }}>
                 Prefer to talk? <a href={`tel:${site.phoneTel}`} className="text-maroon">{site.phoneDisplay}</a>

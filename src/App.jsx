@@ -25,6 +25,9 @@ import Story from './pages/Story.jsx';
 import Visit from './pages/Visit.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
+import AuthCallback from './pages/AuthCallback.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
 import Account from './pages/Account.jsx';
 import Admin from './pages/Admin.jsx';
 import NotFound from './pages/NotFound.jsx';
@@ -88,6 +91,9 @@ export default function App() {
                     <Route path="/wishlist" element={<Wishlist />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
                     <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
                     <Route path="/story" element={<Story />} />
