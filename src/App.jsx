@@ -10,7 +10,6 @@ import { ProductsProvider } from './context/ProductsContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
 import { WishlistProvider } from './context/WishlistContext.jsx';
 
-import Cursor from './components/Cursor.jsx';
 import Navigation from './components/Navigation.jsx';
 import Footer from './components/Footer.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
@@ -77,7 +76,6 @@ export default function App() {
               <SplashScreen />
               <ScrollSync />
               <RouteResetter />
-              <Cursor />
               <Navigation />
               <main>
                 <ErrorBoundary>
