@@ -28,14 +28,34 @@ export default function SareeCard({ saree }) {
       </button>
 
       <Link to={`/saree/${saree.id}`} className="block">
-        <div className="relative aspect-[3/4]">
-          <SareeSwatch
-            swatch={saree.swatch}
-            accent={saree.accent}
-            motif={saree.motif}
-            motifSize="7rem"
-            className="h-full w-full transition-transform duration-700 group-hover:scale-[1.03]"
-          />
+        <div className="relative aspect-[3/4] overflow-hidden">
+          {saree.images?.length ? (
+            <>
+              <img
+                src={saree.images[0]}
+                alt={saree.title}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              />
+              {saree.images[1] && (
+                <img
+                  src={saree.images[1]}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                />
+              )}
+            </>
+          ) : (
+            <SareeSwatch
+              swatch={saree.swatch}
+              accent={saree.accent}
+              motif={saree.motif}
+              motifSize="7rem"
+              className="h-full w-full transition-transform duration-700 group-hover:scale-[1.03]"
+            />
+          )}
           {saree.badge && (
             <span className="absolute left-3 top-3 bg-maroon-deep px-3 py-1 font-roman text-[10px] uppercase tracking-[0.18em] text-ivory">
               {saree.badge}

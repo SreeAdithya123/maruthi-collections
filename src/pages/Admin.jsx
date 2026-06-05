@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { Plus, Pencil, Trash2, X, RotateCcw, Database } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Plus, Pencil, Trash2, X, RotateCcw, Database, ImagePlus, Loader2 } from 'lucide-react';
 import { useProducts } from '../context/ProductsContext';
 import { useAuth } from '../context/AuthContext';
 import { makeProduct, inr, WEAVES, COLOR_NAMES, OCCASIONS, occasionLabel } from '../data/sarees';
 import SareeSwatch from '../components/SareeSwatch';
+import { uploadSareeImage, deleteSareeImage } from '../lib/uploadImage';
+
+const MAX_IMAGES = 4;
 
 const EMPTY = {
   title: '',
@@ -17,6 +21,7 @@ const EMPTY = {
   badge: '',
   featured: false,
   isUnique: true,
+  images: [],
 };
 
 const FIELD = 'w-full border bg-ivory px-3 py-2 font-sans text-sm text-ink outline-none transition-colors focus:border-zari-gold';
@@ -26,8 +31,9 @@ export default function Admin() {
   const { products, seeded, addProduct, updateProduct, deleteProduct, seedCatalogue } = useProducts();
   const { user } = useAuth();
   const [editing, setEditing] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
-  const openNew = () => setEditing({ ...EMPTY });
+  const openNew = () => setEditing({ ...EMPTY, images: [] });
   const openEdit = (p) =>
     setEditing({
       id: p.id,
@@ -43,9 +49,39 @@ export default function Admin() {
       badge: p.badge || '',
       featured: p.featured,
       isUnique: p.isUnique,
+      images: [...(p.images || [])],
     });
 
   const set = (k, v) => setEditing((f) => ({ ...f, [k]: v }));
+
+  const onPickImages = async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = ''; // let the same file be chosen again later
+    if (!files.length) return;
+    const room = MAX_IMAGES - (editing.images?.length || 0);
+    if (room <= 0) {
+      toast.error(`Up to ${MAX_IMAGES} photos per saree`);
+      return;
+    }
+    setUploading(true);
+    try {
+      for (const file of files.slice(0, room)) {
+        const url = await uploadSareeImage(file);
+        setEditing((f) => ({ ...f, images: [...(f.images || []), url] }));
+      }
+      toast.success('Photo added');
+    } catch (err) {
+      toast.error(err?.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = (url) => {
+    setEditing((f) => ({ ...f, images: (f.images || []).filter((u) => u !== url) }));
+    deleteSareeImage(url); // best-effort cleanup in Storage
+  };
+
   const toggleOcc = (o) =>
     setEditing((f) => ({
       ...f,
@@ -114,7 +150,11 @@ export default function Admin() {
 
                 <div className="mt-5 grid gap-6 md:grid-cols-[200px_1fr]">
                   <div>
-                    <SareeSwatch swatch={preview.swatch} accent={preview.accent} motif={preview.motif} motifSize="4rem" className="aspect-[3/4] w-full rounded-[3px]" />
+                    {editing.images?.length ? (
+                      <img src={editing.images[0]} alt="" className="aspect-[3/4] w-full rounded-[3px] object-cover" />
+                    ) : (
+                      <SareeSwatch swatch={preview.swatch} accent={preview.accent} motif={preview.motif} motifSize="4rem" className="aspect-[3/4] w-full rounded-[3px]" />
+                    )}
                     <p className="mt-2 text-center font-sans text-xs text-ink-soft">Live preview</p>
                   </div>
 
@@ -160,6 +200,30 @@ export default function Admin() {
                     <div className="sm:col-span-2">
                       <label className={LABEL}>Full description</label>
                       <textarea rows={3} className={`${FIELD} resize-none`} style={{ borderColor: 'var(--border)' }} value={editing.fullDescription} onChange={(e) => set('fullDescription', e.target.value)} placeholder="The full story for the product page" />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className={LABEL}>Photos (up to {MAX_IMAGES})</label>
+                      <div className="flex flex-wrap gap-3">
+                        {(editing.images || []).map((url, i) => (
+                          <div key={url} className="relative h-24 w-20 overflow-hidden rounded-[2px] border" style={{ borderColor: 'var(--border)' }}>
+                            <img src={url} alt="" className="h-full w-full object-cover" />
+                            {i === 0 && (
+                              <span className="absolute inset-x-0 bottom-0 bg-maroon-deep/85 py-0.5 text-center font-roman text-[0.5rem] uppercase tracking-[0.12em] text-ivory">Cover</span>
+                            )}
+                            <button type="button" onClick={() => removeImage(url)} aria-label="Remove photo" className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ivory/90 text-ink-soft transition-colors hover:text-maroon">
+                              <X size={13} />
+                            </button>
+                          </div>
+                        ))}
+                        {(editing.images?.length || 0) < MAX_IMAGES && (
+                          <label className={`flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[2px] border border-dashed text-ink-soft transition-colors hover:border-zari-gold hover:text-maroon ${uploading ? 'pointer-events-none opacity-60' : ''}`} style={{ borderColor: 'var(--border)' }}>
+                            {uploading ? <Loader2 size={18} className="animate-spin" /> : <ImagePlus size={18} />}
+                            <span className="font-roman text-[0.5rem] uppercase tracking-[0.12em]">{uploading ? 'Uploading' : 'Add'}</span>
+                            <input type="file" accept="image/*" multiple className="hidden" onChange={onPickImages} disabled={uploading} />
+                          </label>
+                        )}
+                      </div>
+                      <p className="mt-2 font-sans text-xs text-ink-soft">First photo is the cover. Drag-free — just pick up to {MAX_IMAGES}. Leave empty to use the woven swatch.</p>
                     </div>
                     <div>
                       <label className={LABEL}>Badge (optional)</label>

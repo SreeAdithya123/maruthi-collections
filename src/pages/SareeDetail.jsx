@@ -58,6 +58,8 @@ export default function SareeDetail() {
   const inStock = saree.stock > 0;
   const wished = isWishlisted(saree.id);
   const related = relatedSarees(products, saree);
+  const gallery = saree.images?.length ? saree.images : null;
+  const activeView = gallery ? Math.min(view, gallery.length - 1) : view;
   const waText = encodeURIComponent(
     `Namaskaram Sai Priyanka, I'm interested in "${saree.title}" (${saree.sku}) — ${inr(saree.price)}. Is it available?`
   );
@@ -85,29 +87,43 @@ export default function SareeDetail() {
         <div className="mt-8 grid gap-10 md:grid-cols-2 lg:gap-16">
           {/* gallery */}
           <div className="flex gap-4">
-            <div className="flex flex-col gap-3">
-              {VIEWS.map((v, i) => (
-                <button
-                  key={v.label}
-                  onClick={() => setView(i)}
-                  aria-label={v.label}
-                  className={`h-16 w-16 overflow-hidden rounded-[2px] border-2 transition ${
-                    view === i ? 'border-maroon' : 'border-transparent opacity-70 hover:opacity-100'
-                  }`}
-                >
-                  <SareeSwatch swatch={saree.swatch} accent={saree.accent} motif={saree.motif} angle={v.angle} motifSize="2rem" className="h-full w-full" />
-                </button>
-              ))}
-            </div>
+            {(gallery ? gallery.length > 1 : true) && (
+              <div className="flex flex-col gap-3">
+                {(gallery || VIEWS).map((v, i) => (
+                  <button
+                    key={gallery ? v : v.label}
+                    onClick={() => setView(i)}
+                    aria-label={gallery ? `Photo ${i + 1}` : v.label}
+                    className={`h-16 w-16 overflow-hidden rounded-[2px] border-2 transition ${
+                      activeView === i ? 'border-maroon' : 'border-transparent opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    {gallery ? (
+                      <img src={v} alt="" loading="lazy" className="h-full w-full object-cover" />
+                    ) : (
+                      <SareeSwatch swatch={saree.swatch} accent={saree.accent} motif={saree.motif} angle={v.angle} motifSize="2rem" className="h-full w-full" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="relative flex-1">
-              <SareeSwatch
-                swatch={saree.swatch}
-                accent={saree.accent}
-                motif={saree.motif}
-                angle={VIEWS[view].angle}
-                motifSize={VIEWS[view].motifSize}
-                className="aspect-[4/5] w-full rounded-[3px]"
-              />
+              {gallery ? (
+                <img
+                  src={gallery[activeView]}
+                  alt={saree.title}
+                  className="aspect-[4/5] w-full rounded-[3px] object-cover"
+                />
+              ) : (
+                <SareeSwatch
+                  swatch={saree.swatch}
+                  accent={saree.accent}
+                  motif={saree.motif}
+                  angle={VIEWS[activeView].angle}
+                  motifSize={VIEWS[activeView].motifSize}
+                  className="aspect-[4/5] w-full rounded-[3px]"
+                />
+              )}
               {saree.badge && (
                 <span className="absolute left-4 top-4 bg-maroon-deep px-3 py-1 font-roman text-[10px] uppercase tracking-[0.18em] text-ivory">
                   {saree.badge}

@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { inr } from '../data/sarees';
 import { site } from '../data/site';
-import SareeSwatch from '../components/SareeSwatch';
+import ProductImage from '../components/ProductImage';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 
 const COUPONS = { FESTIVE10: 0.1, GODAVARI5: 0.05 };
@@ -75,7 +75,7 @@ export default function Cart() {
             {items.map((item) => (
               <div key={item.id} className="reveal flex gap-4 border-b py-5" style={{ borderColor: 'var(--border)' }}>
                 <Link to={`/saree/${item.id}`} className="shrink-0">
-                  <SareeSwatch swatch={item.swatch} accent={item.accent} motif={item.motif} motifSize="2.5rem" className="h-28 w-24 rounded-[2px]" />
+                  <ProductImage saree={item} motifSize="2.5rem" className="h-28 w-24 rounded-[2px]" />
                 </Link>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <div className="flex justify-between gap-3">

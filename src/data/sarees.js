@@ -308,5 +308,6 @@ export function makeProduct(input) {
     reviewCount: input.reviewCount ?? 0,
     badge: input.badge?.trim() || null,
     featured: input.featured ?? false,
+    images: Array.isArray(input.images) ? input.images.filter(Boolean).slice(0, 4) : [],
   };
 }

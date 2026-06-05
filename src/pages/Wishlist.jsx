@@ -3,7 +3,7 @@ import { Heart, X } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import { inr } from '../data/sarees';
-import SareeSwatch from '../components/SareeSwatch';
+import ProductImage from '../components/ProductImage';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 
 export default function Wishlist() {
@@ -54,7 +54,7 @@ export default function Wishlist() {
                 <X size={16} />
               </button>
               <Link to={`/saree/${item.id}`}>
-                <SareeSwatch swatch={item.swatch} accent={item.accent} motif={item.motif} motifSize="5rem" className="aspect-[3/4] w-full" />
+                <ProductImage saree={item} motifSize="5rem" className="aspect-[3/4] w-full" />
               </Link>
               <div className="flex grow flex-col p-4">
                 <span className="font-roman text-[10px] uppercase tracking-[0.22em] text-zari-gold">{item.weaveLabel}</span>
