@@ -4,9 +4,14 @@ import toast from 'react-hot-toast';
 const CartContext = createContext(null);
 const KEY = 'maruthi-cart';
 
+// A cart line is unique per (product, size). Sarees have no size → keyed by id.
+const lineKey = (id, size) => (size ? `${id}__${size}` : id);
+
 function load() {
   try {
-    return JSON.parse(localStorage.getItem(KEY)) || [];
+    const raw = JSON.parse(localStorage.getItem(KEY)) || [];
+    // Backfill lineId for carts saved before sizes existed.
+    return raw.map((i) => ({ ...i, lineId: i.lineId || lineKey(i.id, i.size) }));
   } catch {
     return [];
   }
@@ -23,29 +28,29 @@ export function CartProvider({ children }) {
     }
   }, [items]);
 
-  const addToCart = useCallback((saree, qty = 1) => {
+  const addToCart = useCallback((saree, qty = 1, size = null) => {
+    const id = lineKey(saree.id, size);
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === saree.id);
-      // Unique pieces can't exceed stock.
+      const existing = prev.find((i) => i.lineId === id);
       if (existing) {
         if (saree.isUnique) {
           toast(`${saree.title} is already in your cart`);
           return prev;
         }
-        return prev.map((i) => (i.id === saree.id ? { ...i, qty: i.qty + qty } : i));
+        return prev.map((i) => (i.lineId === id ? { ...i, qty: i.qty + qty } : i));
       }
-      return [...prev, { ...saree, qty }];
+      return [...prev, { ...saree, qty, size: size || null, lineId: id }];
     });
-    toast.success(`${saree.title} — added to cart`);
+    toast.success(`${saree.title}${size ? ` · ${size}` : ''} — added to cart`);
   }, []);
 
-  const removeFromCart = useCallback((id) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+  const removeFromCart = useCallback((lineId) => {
+    setItems((prev) => prev.filter((i) => i.lineId !== lineId));
   }, []);
 
-  const updateQty = useCallback((id, qty) => {
+  const updateQty = useCallback((lineId, qty) => {
     setItems((prev) =>
-      qty < 1 ? prev.filter((i) => i.id !== id) : prev.map((i) => (i.id === id ? { ...i, qty } : i))
+      qty < 1 ? prev.filter((i) => i.lineId !== lineId) : prev.map((i) => (i.lineId === lineId ? { ...i, qty } : i))
     );
   }, []);
 

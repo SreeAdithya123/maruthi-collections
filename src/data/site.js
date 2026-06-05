@@ -2,7 +2,7 @@ export const site = {
   brand: 'Maruthi Collections',
   brandTelugu: 'మారుతి కలెక్షన్స్',
   tagline: 'Threads of the Godavari',
-  promise: 'Curated handloom sarees from across South India — chosen one weave at a time.',
+  promise: 'Hand-block Kalamkari kurtis, frocks & cotton sarees — and easy daily-wear drapes, from our boutique on the Godavari.',
   est: 'Est. 2018 · Nidadavole',
   owner: 'Sai Priyanka Godavari',
   phoneDisplay: '+91 86392 32932',
@@ -16,7 +16,7 @@ export const site = {
 
 export const navLinks = [
   { label: 'Home', to: '/' },
-  { label: 'Sarees', to: '/sarees' },
+  { label: 'Shop', to: '/sarees' },
   { label: 'Story', to: '/story' },
   { label: 'Visit', to: '/visit' },
 ];

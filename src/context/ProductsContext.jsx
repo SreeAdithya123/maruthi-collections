@@ -72,10 +72,12 @@ export function ProductsProvider({ children }) {
 
   const seedCatalogue = useCallback(async () => {
     if (!hasSupabase) return toast.error('Catalogue is not connected');
+    // Replace the whole catalogue with the built-in pieces (clears stale rows).
+    await supabase.from('products').delete().neq('id', '__none__');
     const rows = SEED_SAREES.map((p) => ({ id: p.id, data: p }));
     const { error } = await supabase.from('products').upsert(rows);
     if (error) return toast.error(error.message);
-    toast.success('Catalogue seeded with 35 sarees');
+    toast.success(`Catalogue seeded with ${rows.length} pieces`);
     return fetchProducts();
   }, [fetchProducts]);
 

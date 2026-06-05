@@ -121,7 +121,7 @@ export default function CollectionStack({ id = 'collection' }) {
       <div className="mx-auto max-w-[1300px] px-6 pt-24 text-center md:px-12 md:pt-28">
         <span className="label-roman">The Collection</span>
         <h2 className="mt-4 font-display text-4xl font-light leading-tight text-maroon-deep md:text-6xl">
-          Eight weaves.
+          Four lines.
           <br />
           <em className="italic text-zari-gold">One curator&rsquo;s eye.</em>
         </h2>

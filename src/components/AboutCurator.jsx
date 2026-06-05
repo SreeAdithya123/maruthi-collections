@@ -1,10 +1,10 @@
 import { site } from '../data/site';
 
 const stats = [
-  { value: '120+', label: 'Weavers We Work With' },
-  { value: '8', label: 'Heritage Weaves' },
+  { value: '40+', label: 'Artisans We Work With' },
+  { value: '100%', label: 'Natural-Dye Kalamkari' },
   { value: '6 yrs', label: 'In Nidadavole' },
-  { value: 'GI ✓', label: 'Certified Authentic' },
+  { value: 'Hand', label: 'Block & Pen-Painted' },
 ];
 
 export default function AboutCurator() {
@@ -36,13 +36,14 @@ export default function AboutCurator() {
             <p>
               Sai Priyanka Godavari grew up watching her mother fold sarees the way other
               mothers folded prayers — slowly, reverently, with both hands. Maruthi Collections
-              is the boutique she always imagined: a quiet room in Nidadavole where weavers&rsquo;
-              work is treated as art, not merchandise.
+              is the boutique she always imagined: a quiet room in Nidadavole where hand-block
+              Kalamkari is treated as art, not merchandise.
             </p>
             <p>
-              Every saree at Maruthi is chosen by Priyanka herself — from Kanchipuram looms,
-              Uppada weavers, and Pochampally artisans she has known by name for years. No bulk
-              orders. No mass imports. Just honest cloth, honest stories.
+              Every piece at Maruthi is chosen by Priyanka herself — half &amp; half kurtis,
+              frocks for women and little girls, cotton sarees and easy daily-wear drapes, from
+              Kalamkari artists in Srikalahasti and Machilipatnam she has known by name for years.
+              No bulk orders. No mass imports. Just honest cloth, honest stories.
             </p>
           </div>
 

@@ -68,19 +68,20 @@ export default function SareeCard({ saree }) {
           )}
           <button
             onClick={(e) => {
+              if (saree.sizes?.length) return; // let the card open the product to choose a size
               e.preventDefault();
               addToCart(saree);
             }}
             className="absolute bottom-3 right-3 flex translate-y-2 items-center gap-1.5 bg-maroon-deep/95 px-3 py-2 font-roman text-[9px] uppercase tracking-[0.18em] text-ivory opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
           >
-            <ShoppingBag size={12} /> Add
+            <ShoppingBag size={12} /> {saree.sizes?.length ? 'Select size' : 'Add'}
           </button>
         </div>
       </Link>
 
       <Link to={`/saree/${saree.id}`} className="flex grow flex-col p-4">
         <span className="font-roman text-[10px] uppercase tracking-[0.22em] text-zari-gold">
-          {saree.weaveLabel}
+          {saree.typeLabel}
         </span>
         <h3 className="mt-1 font-display text-lg leading-snug text-maroon-deep">{saree.title}</h3>
         <div className="mt-auto flex items-baseline gap-2 pt-3">

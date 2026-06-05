@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { Heart, ShieldCheck, Truck, RotateCcw, Phone, Star, Check } from 'lucide-react';
 import { relatedSarees, inr, occasionLabel } from '../data/sarees';
 import { useProducts } from '../context/ProductsContext';
@@ -50,8 +51,15 @@ export default function SareeDetail() {
   const { addToCart, isInCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const [view, setView] = useState(0);
+  const [size, setSize] = useState(null);
+  const [sizeError, setSizeError] = useState(false);
 
   useRevealOnScroll([id]);
+  useEffect(() => {
+    setSize(null);
+    setSizeError(false);
+    setView(0);
+  }, [id]);
 
   if (!saree) return <NotFound />;
 
@@ -60,12 +68,28 @@ export default function SareeDetail() {
   const related = relatedSarees(products, saree);
   const gallery = saree.images?.length ? saree.images : null;
   const activeView = gallery ? Math.min(view, gallery.length - 1) : view;
+  const requireSize = saree.sizes?.length > 0;
+  const audienceNote = saree.audience === 'kids' ? ' · Girls' : saree.audience === 'both' ? ' · Women & Girls' : '';
+
+  const addNow = () => {
+    if (requireSize && !size) {
+      setSizeError(true);
+      toast.error('Please select a size');
+      return;
+    }
+    addToCart(saree, 1, size);
+  };
   const waText = encodeURIComponent(
-    `Namaskaram Sai Priyanka, I'm interested in "${saree.title}" (${saree.sku}) — ${inr(saree.price)}. Is it available?`
+    `Namaskaram Sai Priyanka, I'm interested in "${saree.title}" (${saree.sku})${size ? ` in size ${size}` : ''} — ${inr(saree.price)}. Is it available?`
   );
 
   const buyNow = () => {
-    addToCart(saree);
+    if (requireSize && !size) {
+      setSizeError(true);
+      toast.error('Please select a size');
+      return;
+    }
+    addToCart(saree, 1, size);
     navigate('/cart');
   };
 
@@ -76,9 +100,9 @@ export default function SareeDetail() {
         <nav className="font-roman text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
           <Link to="/" className="hover:text-maroon">Home</Link>
           <span className="px-2 text-zari-gold">/</span>
-          <Link to="/sarees" className="hover:text-maroon">Sarees</Link>
+          <Link to="/sarees" className="hover:text-maroon">Shop</Link>
           <span className="px-2 text-zari-gold">/</span>
-          <Link to={`/sarees/${saree.weave}`} className="hover:text-maroon">{saree.weaveLabel}</Link>
+          <Link to={`/sarees/${saree.type}`} className="hover:text-maroon">{saree.typeLabel}</Link>
           <span className="px-2 text-zari-gold">/</span>
           <span className="text-maroon-deep">{saree.title}</span>
         </nav>
@@ -135,7 +159,7 @@ export default function SareeDetail() {
           {/* info */}
           <div>
             <span className="font-roman text-[0.65rem] uppercase tracking-[0.24em] text-zari-gold">
-              {saree.weaveLabel} · {saree.region}
+              {saree.typeLabel} · {saree.region}
             </span>
             <h1 className="mt-2 font-display text-4xl font-light text-maroon-deep">{saree.title}</h1>
 
@@ -172,10 +196,41 @@ export default function SareeDetail() {
               </div>
             </div>
 
+            {/* size */}
+            {requireSize && (
+              <div className="mt-6">
+                <div className="flex items-center gap-3">
+                  <span className="font-roman text-[0.58rem] uppercase tracking-[0.2em] text-ink-soft">
+                    Size{audienceNote}
+                  </span>
+                  {sizeError && !size && (
+                    <span className="font-sans text-xs text-maroon-silk">Please select a size</span>
+                  )}
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {saree.sizes.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => {
+                        setSize(s);
+                        setSizeError(false);
+                      }}
+                      className={`min-w-[3rem] rounded-[2px] border px-3 py-2 font-roman text-[0.62rem] uppercase tracking-[0.1em] transition ${
+                        size === s ? 'border-maroon bg-maroon text-ivory' : 'border-border text-ink-soft hover:border-maroon hover:text-maroon'
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* actions */}
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <button
-                onClick={() => addToCart(saree)}
+                onClick={addNow}
                 disabled={!inStock}
                 className="btn-primary flex-1 justify-center disabled:cursor-not-allowed disabled:opacity-50"
               >

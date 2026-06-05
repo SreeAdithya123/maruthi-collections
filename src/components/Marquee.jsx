@@ -1,12 +1,12 @@
 const WEAVES = [
-  'Kanjivaram',
-  'Banarasi',
-  'Pochampally',
-  'Gadwal',
-  'Uppada Pattu',
-  'Venkatagiri',
-  'Mangalagiri',
-  'Dharmavaram',
+  'Kalamkari',
+  'Half & Half Kurtis',
+  'Cotton Sarees',
+  'Hand-Block Print',
+  'Frocks for Girls',
+  'Daily Wear',
+  'Natural Dyes',
+  'Srikalahasti · Machilipatnam',
 ];
 
 function Track() {

@@ -54,7 +54,7 @@ export default function HeroCanvas() {
             <div className="mb-6 flex items-center gap-3">
               <span className="rule-gold" />
               <span className="font-roman text-[0.7rem] uppercase tracking-[0.32em] text-maroon-deep">
-                A Saree House from the Godavari
+                A Kalamkari Boutique from the Godavari
               </span>
             </div>
 
@@ -65,9 +65,9 @@ export default function HeroCanvas() {
             </h1>
 
             <p className="mt-6 max-w-md font-display text-lg leading-relaxed text-ink md:text-xl">
-              Maruthi Collections is a curated saree boutique in Nidadavole, where every
-              Kanjivaram, Banarasi, and Pochampally is hand-chosen by Sai Priyanka — one weave
-              at a time.
+              Maruthi Collections is a boutique in Nidadavole for hand-block Kalamkari — half &
+              half kurtis, frocks for women and girls, cotton sarees, and easy daily-wear
+              drapes, each chosen by Sai Priyanka.
             </p>
 
             <div className="mt-9 flex flex-wrap gap-4">
@@ -88,7 +88,7 @@ export default function HeroCanvas() {
           transition={{ delay: 1.8, duration: 1 }}
           className="absolute bottom-9 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2"
         >
-          <span className="font-display text-sm italic text-ink-soft">scroll to unfold the silk</span>
+          <span className="font-display text-sm italic text-ink-soft">scroll to unfold the story</span>
           <span className="h-10 w-px animate-pulse bg-gradient-to-b from-zari-gold to-transparent" />
         </motion.div>
 

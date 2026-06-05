@@ -24,11 +24,10 @@ export default function Sarees() {
   const getArr = (k) => searchParams.get(k)?.split(',').filter(Boolean) || [];
   const selected = {
     bands: getArr('price'),
-    weave: getArr('weave'),
-    fabric: getArr('fabric'),
+    type: getArr('type'),
     occasion: getArr('occasion'),
     color: getArr('color'),
-    region: getArr('region'),
+    size: getArr('size'),
   };
   const sortBy = searchParams.get('sort') || 'featured';
 
@@ -60,7 +59,7 @@ export default function Sarees() {
         <nav className="font-roman text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
           <Link to="/" className="hover:text-maroon">Home</Link>
           <span className="px-2 text-zari-gold">/</span>
-          <Link to="/sarees" className="hover:text-maroon">Sarees</Link>
+          <Link to="/sarees" className="hover:text-maroon">Shop</Link>
           {category !== 'all' && (
             <>
               <span className="px-2 text-zari-gold">/</span>
@@ -73,7 +72,7 @@ export default function Sarees() {
         <div className="mt-5">
           <span className="label-roman">The Collection</span>
           <h1 className="mt-3 font-display text-4xl font-light text-maroon-deep md:text-6xl">
-            {category === 'all' ? 'Every saree, hand-picked.' : activeCat.label}
+            {category === 'all' ? 'Hand-picked, piece by piece.' : activeCat.label}
           </h1>
         </div>
 
@@ -110,7 +109,7 @@ export default function Sarees() {
               <SlidersHorizontal size={14} /> Filters
             </button>
             <span className="font-sans text-sm text-ink-soft">
-              {results.length} {results.length === 1 ? 'saree' : 'sarees'}
+              {results.length} {results.length === 1 ? 'piece' : 'pieces'}
             </span>
           </div>
           <label className="flex items-center gap-2 text-sm text-ink-soft">
@@ -144,7 +143,7 @@ export default function Sarees() {
           <div className="min-w-0 flex-1">
             {results.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-28 text-center">
-                <p className="font-display text-2xl italic text-maroon-deep">No sarees match just yet.</p>
+                <p className="font-display text-2xl italic text-maroon-deep">Nothing matches just yet.</p>
                 <p className="mt-2 text-ink-soft">Try fewer filters — or let Sai Priyanka find one for you.</p>
                 <button onClick={clearAll} className="btn-ghost mt-6">Clear filters</button>
               </div>
@@ -170,7 +169,7 @@ export default function Sarees() {
             </div>
             <SareeFilters selected={selected} onToggle={onToggle} onClear={clearAll} />
             <button onClick={() => setDrawer(false)} className="btn-primary mt-6 w-full">
-              Show {results.length} sarees
+              Show {results.length} pieces
             </button>
           </div>
         </div>

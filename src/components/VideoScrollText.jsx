@@ -7,9 +7,9 @@ const SLICE_LEN = 90;
 const FPS = 12;
 
 const LINES = [
-  { text: 'Every saree we sell', threshold: 0.15, gold: false },
-  { text: 'has been touched by a weaver, chosen by a woman,', threshold: 0.35, gold: false },
-  { text: 'and folded with prayer.', threshold: 0.55, gold: true },
+  { text: 'Every piece we sell', threshold: 0.15, gold: false },
+  { text: 'was drawn by hand, dyed with leaf and root,', threshold: 0.35, gold: false },
+  { text: 'and chosen one by one.', threshold: 0.55, gold: true },
 ];
 
 export default function VideoScrollText() {

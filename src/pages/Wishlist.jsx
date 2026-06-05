@@ -57,20 +57,26 @@ export default function Wishlist() {
                 <ProductImage saree={item} motifSize="5rem" className="aspect-[3/4] w-full" />
               </Link>
               <div className="flex grow flex-col p-4">
-                <span className="font-roman text-[10px] uppercase tracking-[0.22em] text-zari-gold">{item.weaveLabel}</span>
+                <span className="font-roman text-[10px] uppercase tracking-[0.22em] text-zari-gold">{item.typeLabel}</span>
                 <Link to={`/saree/${item.id}`} className="mt-1 font-display text-lg leading-snug text-maroon-deep hover:text-maroon">
                   {item.title}
                 </Link>
                 <span className="mt-1 font-display text-base text-maroon">{inr(item.price)}</span>
-                <button
-                  onClick={() => {
-                    addToCart(item);
-                    removeFromWishlist(item.id);
-                  }}
-                  className="btn-primary mt-3 w-full justify-center !py-2.5 !text-[0.6rem]"
-                >
-                  Move to Cart
-                </button>
+                {item.sizes?.length ? (
+                  <Link to={`/saree/${item.id}`} className="btn-primary mt-3 w-full justify-center !py-2.5 !text-[0.6rem]">
+                    Select size
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      addToCart(item);
+                      removeFromWishlist(item.id);
+                    }}
+                    className="btn-primary mt-3 w-full justify-center !py-2.5 !text-[0.6rem]"
+                  >
+                    Move to Cart
+                  </button>
+                )}
               </div>
             </article>
           ))}

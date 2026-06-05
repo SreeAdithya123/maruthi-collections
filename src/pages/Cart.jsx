@@ -36,11 +36,13 @@ export default function Cart() {
 
   const saveForLater = (item) => {
     addToWishlist(item);
-    removeFromCart(item.id);
+    removeFromCart(item.lineId);
   };
 
   const orderViaWhatsApp = () => {
-    const lines = items.map((i) => `• ${i.title} (${i.sku}) x${i.qty} — ${inr(i.price * i.qty)}`).join('%0A');
+    const lines = items
+      .map((i) => `• ${i.title}${i.size ? ` · Size ${i.size}` : ''} (${i.sku}) x${i.qty} — ${inr(i.price * i.qty)}`)
+      .join('%0A');
     const msg =
       `Namaskaram Sai Priyanka, I'd like to order:%0A%0A${lines}%0A%0A` +
       `Subtotal: ${inr(subtotal)}` +
@@ -73,26 +75,28 @@ export default function Cart() {
           {/* items */}
           <div>
             {items.map((item) => (
-              <div key={item.id} className="reveal flex gap-4 border-b py-5" style={{ borderColor: 'var(--border)' }}>
+              <div key={item.lineId} className="reveal flex gap-4 border-b py-5" style={{ borderColor: 'var(--border)' }}>
                 <Link to={`/saree/${item.id}`} className="shrink-0">
                   <ProductImage saree={item} motifSize="2.5rem" className="h-28 w-24 rounded-[2px]" />
                 </Link>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <div className="flex justify-between gap-3">
                     <div className="min-w-0">
-                      <span className="font-roman text-[0.58rem] uppercase tracking-[0.2em] text-zari-gold">{item.weaveLabel}</span>
+                      <span className="font-roman text-[0.58rem] uppercase tracking-[0.2em] text-zari-gold">{item.typeLabel}</span>
                       <Link to={`/saree/${item.id}`} className="block font-display text-lg text-maroon-deep hover:text-maroon">{item.title}</Link>
-                      <span className="font-sans text-xs text-ink-soft">{item.color}</span>
+                      <span className="font-sans text-xs text-ink-soft">
+                        {item.color}{item.size ? ` · Size ${item.size}` : ''}
+                      </span>
                     </div>
-                    <button onClick={() => removeFromCart(item.id)} aria-label="Remove" className="h-8 w-8 shrink-0 text-ink-soft transition-colors hover:text-maroon">
+                    <button onClick={() => removeFromCart(item.lineId)} aria-label="Remove" className="h-8 w-8 shrink-0 text-ink-soft transition-colors hover:text-maroon">
                       <X size={18} />
                     </button>
                   </div>
                   <div className="mt-auto flex items-end justify-between pt-3">
                     <div className="flex items-center border" style={{ borderColor: 'var(--border)' }}>
-                      <button onClick={() => updateQty(item.id, item.qty - 1)} className="px-2.5 py-1.5 text-ink-soft hover:text-maroon" aria-label="Decrease"><Minus size={14} /></button>
+                      <button onClick={() => updateQty(item.lineId, item.qty - 1)} className="px-2.5 py-1.5 text-ink-soft hover:text-maroon" aria-label="Decrease"><Minus size={14} /></button>
                       <span className="min-w-[2rem] text-center font-sans text-sm">{item.qty}</span>
-                      <button onClick={() => updateQty(item.id, item.qty + 1)} disabled={item.isUnique} className="px-2.5 py-1.5 text-ink-soft hover:text-maroon disabled:opacity-30" aria-label="Increase"><Plus size={14} /></button>
+                      <button onClick={() => updateQty(item.lineId, item.qty + 1)} disabled={item.isUnique} className="px-2.5 py-1.5 text-ink-soft hover:text-maroon disabled:opacity-30" aria-label="Increase"><Plus size={14} /></button>
                     </div>
                     <div className="text-right">
                       <span className="font-display text-lg text-maroon">{inr(item.price * item.qty)}</span>

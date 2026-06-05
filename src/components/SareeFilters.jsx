@@ -1,11 +1,11 @@
 import { Check } from 'lucide-react';
 import {
   PRICE_BANDS,
-  WEAVES,
-  FABRICS,
+  TYPES,
   OCCASIONS,
-  REGIONS,
   COLOR_NAMES,
+  WOMEN_SIZES,
+  KIDS_SIZES,
   colorSwatch,
   occasionLabel,
 } from '../data/sarees';
@@ -36,6 +36,20 @@ function CheckRow({ label, checked, onChange }) {
   );
 }
 
+function SizeChip({ label, checked, onChange }) {
+  return (
+    <button
+      type="button"
+      onClick={onChange}
+      className={`min-w-[2.6rem] rounded-[2px] border px-2 py-1 text-center font-roman text-[0.62rem] uppercase tracking-[0.1em] transition ${
+        checked ? 'border-maroon bg-maroon text-ivory' : 'border-border text-ink-soft hover:border-maroon hover:text-maroon'
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
 export default function SareeFilters({ selected, onToggle, onClear }) {
   const hasAny = Object.values(selected).some((arr) => arr.length);
 
@@ -52,22 +66,31 @@ export default function SareeFilters({ selected, onToggle, onClear }) {
         )}
       </div>
 
+      <Section title="Type">
+        {TYPES.map((t) => (
+          <CheckRow key={t.slug} label={t.label} checked={selected.type.includes(t.slug)} onChange={() => onToggle('type', t.slug)} />
+        ))}
+      </Section>
+
       <Section title="Price">
         {PRICE_BANDS.map((b) => (
           <CheckRow key={b.id} label={b.label} checked={selected.bands.includes(b.id)} onChange={() => onToggle('price', b.id)} />
         ))}
       </Section>
 
-      <Section title="Weave">
-        {WEAVES.map((w) => (
-          <CheckRow key={w.slug} label={w.label} checked={selected.weave.includes(w.slug)} onChange={() => onToggle('weave', w.slug)} />
-        ))}
-      </Section>
-
-      <Section title="Fabric">
-        {FABRICS.map((f) => (
-          <CheckRow key={f} label={f} checked={selected.fabric.includes(f)} onChange={() => onToggle('fabric', f)} />
-        ))}
+      <Section title="Size">
+        <p className="mb-1.5 font-roman text-[0.5rem] uppercase tracking-[0.16em] text-ink-soft/70">Women</p>
+        <div className="flex flex-wrap gap-1.5">
+          {WOMEN_SIZES.map((s) => (
+            <SizeChip key={s} label={s} checked={selected.size.includes(s)} onChange={() => onToggle('size', s)} />
+          ))}
+        </div>
+        <p className="mb-1.5 mt-3 font-roman text-[0.5rem] uppercase tracking-[0.16em] text-ink-soft/70">Girls</p>
+        <div className="flex flex-wrap gap-1.5">
+          {KIDS_SIZES.map((s) => (
+            <SizeChip key={s} label={s} checked={selected.size.includes(s)} onChange={() => onToggle('size', s)} />
+          ))}
+        </div>
       </Section>
 
       <Section title="Occasion">
@@ -94,12 +117,6 @@ export default function SareeFilters({ selected, onToggle, onClear }) {
             );
           })}
         </div>
-      </Section>
-
-      <Section title="Region">
-        {REGIONS.map((r) => (
-          <CheckRow key={r} label={r} checked={selected.region.includes(r)} onChange={() => onToggle('region', r)} />
-        ))}
       </Section>
     </div>
   );

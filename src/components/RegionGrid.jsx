@@ -5,9 +5,9 @@ export default function RegionGrid() {
     <section className="bg-ivory-soft py-24 md:py-32">
       <div className="mx-auto max-w-[1300px] px-6 md:px-12">
         <div className="reveal mb-14 text-center">
-          <span className="label-roman">Browse by Region</span>
+          <span className="label-roman">What We Make</span>
           <h2 className="mt-4 font-display text-4xl font-light text-maroon-deep md:text-6xl">
-            Where the silk <em className="italic text-zari-gold">comes from.</em>
+            What we&rsquo;re <em className="italic text-zari-gold">known for.</em>
           </h2>
         </div>
 

@@ -3,26 +3,33 @@ import toast from 'react-hot-toast';
 import { Plus, Pencil, Trash2, X, RotateCcw, Database, ImagePlus, Loader2 } from 'lucide-react';
 import { useProducts } from '../context/ProductsContext';
 import { useAuth } from '../context/AuthContext';
-import { makeProduct, inr, WEAVES, COLOR_NAMES, OCCASIONS, occasionLabel } from '../data/sarees';
+import { makeProduct, inr, TYPES, COLOR_NAMES, OCCASIONS, occasionLabel, sizeOptionsForType, isApparelType } from '../data/sarees';
 import SareeSwatch from '../components/SareeSwatch';
+import ProductImage from '../components/ProductImage';
 import { uploadSareeImage, deleteSareeImage } from '../lib/uploadImage';
 
 const MAX_IMAGES = 4;
 
 const EMPTY = {
   title: '',
-  weave: 'kanjivaram',
-  color: 'Maroon',
+  type: 'kalamkari-kurti',
+  color: 'Indigo',
   price: '',
   mrp: '',
-  occasion: ['festive'],
+  occasion: ['daily'],
+  sizes: ['S', 'M', 'L', 'XL'],
   description: '',
   fullDescription: '',
   badge: '',
   featured: false,
-  isUnique: true,
+  isUnique: false,
   images: [],
 };
+
+const sizeChip = (active) =>
+  `min-w-[2.6rem] rounded-[2px] border px-2.5 py-1 text-center font-roman text-[0.6rem] uppercase tracking-[0.1em] transition ${
+    active ? 'border-maroon bg-maroon text-ivory' : 'border-border text-ink-soft hover:border-maroon hover:text-maroon'
+  }`;
 
 const FIELD = 'w-full border bg-ivory px-3 py-2 font-sans text-sm text-ink outline-none transition-colors focus:border-zari-gold';
 const LABEL = 'mb-1.5 block font-roman text-[0.55rem] uppercase tracking-[0.18em] text-ink-soft';
@@ -39,11 +46,12 @@ export default function Admin() {
       id: p.id,
       sku: p.sku,
       title: p.title,
-      weave: p.weave,
+      type: p.type,
       color: p.color,
       price: String(p.price),
       mrp: String(p.mrp),
       occasion: [...p.occasion],
+      sizes: [...(p.sizes || [])],
       description: p.description,
       fullDescription: p.fullDescription,
       badge: p.badge || '',
@@ -88,13 +96,19 @@ export default function Admin() {
       occasion: f.occasion.includes(o) ? f.occasion.filter((x) => x !== o) : [...f.occasion, o],
     }));
 
+  const toggleSize = (s) =>
+    setEditing((f) => ({
+      ...f,
+      sizes: f.sizes?.includes(s) ? f.sizes.filter((x) => x !== s) : [...(f.sizes || []), s],
+    }));
+
   const save = (e) => {
     e.preventDefault();
     const built = makeProduct({
       ...editing,
       price: Number(editing.price),
       mrp: editing.mrp ? Number(editing.mrp) : undefined,
-      stock: editing.isUnique ? 1 : 10,
+      stock: editing.isUnique ? 1 : isApparelType(editing.type) ? 12 : 8,
     });
     if (editing.id) updateProduct(editing.id, built);
     else addProduct(built);
@@ -111,7 +125,7 @@ export default function Admin() {
             <span className="label-roman">Curator Studio</span>
             <h1 className="mt-3 font-display text-4xl font-light text-maroon-deep">Manage the collection</h1>
             <p className="mt-1 text-sm text-ink-soft">
-              Signed in as {user?.email} · {products.length} sarees{seeded ? ' · live in Supabase' : ' · built-in (not seeded)'}
+              Signed in as {user?.email} · {products.length} pieces{seeded ? ' · live in Supabase' : ' · built-in (not seeded)'}
             </p>
           </div>
           {seeded && (
@@ -120,7 +134,7 @@ export default function Admin() {
                 <RotateCcw size={14} /> Reset to defaults
               </button>
               <button onClick={openNew} className="btn-primary inline-flex items-center gap-2">
-                <Plus size={15} /> Add Saree
+                <Plus size={15} /> Add Item
               </button>
             </div>
           )}
@@ -131,10 +145,10 @@ export default function Admin() {
             <Database size={26} className="mx-auto text-zari-gold" />
             <p className="mt-4 font-display text-2xl font-light text-maroon-deep">The catalogue isn&rsquo;t in Supabase yet.</p>
             <p className="mx-auto mt-2 max-w-md text-ink-soft">
-              Visitors currently see the built-in 35 sarees. Seed the catalogue once to manage it here — then add, edit, and remove pieces, and your changes show on the live site.
+              Visitors currently see the built-in starter pieces. Seed the catalogue once to manage it here — then add, edit, and remove pieces, and your changes show on the live site.
             </p>
             <button onClick={seedCatalogue} className="btn-primary mt-6 inline-flex items-center gap-2">
-              <Database size={15} /> Seed catalogue (35 sarees)
+              <Database size={15} /> Seed catalogue
             </button>
           </div>
         ) : (
@@ -143,7 +157,7 @@ export default function Admin() {
               <form onSubmit={save} className="mt-8 border bg-ivory-soft/40 p-6" style={{ borderColor: 'rgba(184,137,90,0.4)' }}>
                 <div className="flex items-center justify-between">
                   <h2 className="font-roman text-[0.65rem] uppercase tracking-[0.22em] text-maroon-deep">
-                    {editing.id ? 'Edit saree' : 'New saree'}
+                    {editing.id ? 'Edit item' : 'New item'}
                   </h2>
                   <button type="button" onClick={() => setEditing(null)} aria-label="Close"><X size={18} /></button>
                 </div>
@@ -161,12 +175,12 @@ export default function Admin() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                       <label className={LABEL}>Title</label>
-                      <input className={FIELD} style={{ borderColor: 'var(--border)' }} required value={editing.title} onChange={(e) => set('title', e.target.value)} placeholder="The Bridal Maroon" />
+                      <input className={FIELD} style={{ borderColor: 'var(--border)' }} required value={editing.title} onChange={(e) => set('title', e.target.value)} placeholder="The Indigo Half & Half" />
                     </div>
                     <div>
-                      <label className={LABEL}>Weave</label>
-                      <select className={FIELD} style={{ borderColor: 'var(--border)' }} value={editing.weave} onChange={(e) => set('weave', e.target.value)}>
-                        {WEAVES.map((w) => <option key={w.slug} value={w.slug}>{w.label}</option>)}
+                      <label className={LABEL}>Type</label>
+                      <select className={FIELD} style={{ borderColor: 'var(--border)' }} value={editing.type} onChange={(e) => set('type', e.target.value)}>
+                        {TYPES.map((t) => <option key={t.slug} value={t.slug}>{t.label}</option>)}
                       </select>
                     </div>
                     <div>
@@ -193,6 +207,32 @@ export default function Admin() {
                         ))}
                       </div>
                     </div>
+                    {isApparelType(editing.type) && (
+                      <div className="sm:col-span-2">
+                        <label className={LABEL}>Sizes available</label>
+                        <div className="space-y-2.5">
+                          <div>
+                            <span className="mb-1 block font-roman text-[0.5rem] uppercase tracking-[0.16em] text-ink-soft/70">Women</span>
+                            <div className="flex flex-wrap gap-2">
+                              {sizeOptionsForType(editing.type).women.map((s) => (
+                                <button type="button" key={s} onClick={() => toggleSize(s)} className={sizeChip(editing.sizes?.includes(s))}>{s}</button>
+                              ))}
+                            </div>
+                          </div>
+                          {sizeOptionsForType(editing.type).kids.length > 0 && (
+                            <div>
+                              <span className="mb-1 block font-roman text-[0.5rem] uppercase tracking-[0.16em] text-ink-soft/70">Girls</span>
+                              <div className="flex flex-wrap gap-2">
+                                {sizeOptionsForType(editing.type).kids.map((s) => (
+                                  <button type="button" key={s} onClick={() => toggleSize(s)} className={sizeChip(editing.sizes?.includes(s))}>{s}</button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <p className="mt-2 font-sans text-xs text-ink-soft">Tick every size this piece comes in. Girls sizes tag it under “For Girls”.</p>
+                      </div>
+                    )}
                     <div className="sm:col-span-2">
                       <label className={LABEL}>Short description</label>
                       <input className={FIELD} style={{ borderColor: 'var(--border)' }} value={editing.description} onChange={(e) => set('description', e.target.value)} placeholder="One evocative line for the card" />
@@ -227,7 +267,7 @@ export default function Admin() {
                     </div>
                     <div>
                       <label className={LABEL}>Badge (optional)</label>
-                      <input className={FIELD} style={{ borderColor: 'var(--border)' }} value={editing.badge} onChange={(e) => set('badge', e.target.value)} placeholder="Bridal Heirloom" />
+                      <input className={FIELD} style={{ borderColor: 'var(--border)' }} value={editing.badge} onChange={(e) => set('badge', e.target.value)} placeholder="Half & Half · Hand-Painted" />
                     </div>
                     <div className="flex items-end gap-5">
                       <label className="flex items-center gap-2 text-sm text-ink-soft">
@@ -250,13 +290,13 @@ export default function Admin() {
             <div className="mt-8 overflow-hidden border" style={{ borderColor: 'var(--border)' }}>
               {products.map((p) => (
                 <div key={p.id} className="flex items-center gap-4 border-b px-4 py-3 last:border-b-0" style={{ borderColor: 'var(--border)' }}>
-                  <SareeSwatch swatch={p.swatch} accent={p.accent} motif={p.motif} motifSize="1.4rem" className="h-14 w-12 shrink-0 rounded-[2px]" />
+                  <ProductImage saree={p} motifSize="1.4rem" className="h-14 w-12 shrink-0 rounded-[2px]" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-display text-base text-maroon-deep">{p.title}</p>
-                    <p className="font-roman text-[0.55rem] uppercase tracking-[0.16em] text-zari-gold">{p.weaveLabel} · {p.color}</p>
+                    <p className="font-roman text-[0.55rem] uppercase tracking-[0.16em] text-zari-gold">{p.typeLabel} · {p.color}</p>
                   </div>
                   <span className="hidden w-24 text-right font-display text-maroon sm:block">{inr(p.price)}</span>
-                  <span className="hidden w-20 text-center font-sans text-xs text-ink-soft md:block">{p.isUnique ? '1 / one' : `${p.stock} stk`}</span>
+                  <span className="hidden w-24 text-center font-sans text-xs text-ink-soft md:block">{p.sizes?.length ? `${p.sizes.length} sizes` : p.isUnique ? '1 / one' : `${p.stock} stk`}</span>
                   <div className="flex gap-1">
                     <button onClick={() => openEdit(p)} aria-label="Edit" className="flex h-9 w-9 items-center justify-center text-ink-soft transition-colors hover:text-maroon"><Pencil size={15} /></button>
                     <button onClick={() => deleteProduct(p.id)} aria-label="Delete" className="flex h-9 w-9 items-center justify-center text-ink-soft transition-colors hover:text-maroon-silk"><Trash2 size={15} /></button>
