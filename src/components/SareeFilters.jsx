@@ -23,7 +23,12 @@ function Section({ title, children }) {
 
 function CheckRow({ label, checked, onChange }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2.5 py-1 text-sm text-ink-soft transition-colors hover:text-maroon">
+    <button
+      type="button"
+      onClick={onChange}
+      aria-pressed={checked}
+      className="flex w-full cursor-pointer items-center gap-2.5 py-1 text-left text-sm text-ink-soft transition-colors hover:text-maroon"
+    >
       <span
         className={`flex h-4 w-4 shrink-0 items-center justify-center border transition-colors ${
           checked ? 'border-maroon bg-maroon' : 'border-ink-soft/40'
@@ -32,7 +37,7 @@ function CheckRow({ label, checked, onChange }) {
         {checked && <Check size={11} className="text-ivory" strokeWidth={3} />}
       </span>
       {label}
-    </label>
+    </button>
   );
 }
 

@@ -118,27 +118,37 @@
 .cursor-dot i,
 .cursor-ring i {
   display: block;
-  border-radius: 50%;
   transform: translate(-50%, -50%) scale(1);
-  transition: transform 0.22s ease, background 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.25s ease, background 0.2s ease, border-color 0.2s ease,
+    opacity 0.2s ease, box-shadow 0.2s ease;
 }
+/* Precise inner dot — deep maroon with an ivory halo so it reads on light AND dark. */
 .cursor-dot i {
-  width: 8px;
-  height: 8px;
-  background: var(--zari-gold);
-}
-.cursor-ring i {
-  width: 32px;
-  height: 32px;
-  border: 1px solid rgba(184, 137, 90, 0.55);
-}
-html.cursor--hover .cursor-dot i {
-  transform: translate(-50%, -50%) scale(2.5);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
   background: var(--maroon);
+  box-shadow: 0 0 0 2px rgba(245, 239, 227, 0.65), 0 1px 4px rgba(74, 20, 24, 0.3);
+}
+/* Trailing gold diamond — echoes the zari / marquee motif. */
+.cursor-ring i {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  border: 1.5px solid rgba(184, 137, 90, 0.6);
+  transform: translate(-50%, -50%) rotate(45deg) scale(1);
+  box-shadow: 0 0 12px rgba(184, 137, 90, 0.18);
+}
+/* Hover over anything interactive: dot recedes, diamond blooms into a maroon focus. */
+html.cursor--hover .cursor-dot i {
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
 }
 html.cursor--hover .cursor-ring i {
-  transform: translate(-50%, -50%) scale(1.4);
-  border-color: rgba(184, 137, 90, 0.9);
+  transform: translate(-50%, -50%) rotate(45deg) scale(1.85);
+  border-color: var(--maroon);
+  background: rgba(107, 31, 37, 0.1);
+  box-shadow: 0 0 0 1px rgba(184, 137, 90, 0.45), 0 0 18px rgba(184, 137, 90, 0.28);
 }
 @media (pointer: coarse) {
   .cursor-dot,
