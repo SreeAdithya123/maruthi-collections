@@ -17,7 +17,11 @@ export const supabase =
           persistSession: true,
           autoRefreshToken: true,
           detectSessionInUrl: false,
-          flowType: 'pkce',
+          // Implicit: email confirmation / recovery links carry the session in the
+          // URL hash, so they work even when opened on a different device than the
+          // one that started sign-up (PKCE would require the same browser). The
+          // /auth/callback page still also handles ?code and ?token_hash links.
+          flowType: 'implicit',
         },
       })
     : null;
